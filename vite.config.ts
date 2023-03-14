@@ -1,9 +1,13 @@
 import { rmSync } from 'node:fs'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import Components from 'unplugin-vue-components/vite';
+import { VantResolver } from 'unplugin-vue-components/resolvers';
 import electron from 'vite-plugin-electron'
 import renderer from 'vite-plugin-electron-renderer'
 import pkg from './package.json'
+
+const path = require('path');
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
@@ -61,7 +65,15 @@ export default defineConfig(({ command }) => {
       renderer({
         nodeIntegration: true,
       }),
+      Components({
+        resolvers: [VantResolver()],
+      }),
     ],
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, 'src'),
+      }
+    },
     server: process.env.VSCODE_DEBUG && (() => {
       const url = new URL(pkg.debug.env.VITE_DEV_SERVER_URL)
       return {
